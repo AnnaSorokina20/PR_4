@@ -87,6 +87,81 @@ namespace TransportNW
             Console.WriteLine();
         }
 
+
+
+        //  МЕТОД МІНІМАЛЬНОГО ЕЛЕМЕНТА 
+
+        private static int[,] LeastCost(int[,] c, int[] supplyInit, int[] demandInit)
+        {
+            int m = supplyInit.Length, n = demandInit.Length;
+            int[,] x = new int[m, n];           // 0 – порожня клітинка
+            int[] supply = supplyInit.ToArray();
+            int[] demand = demandInit.ToArray();
+            bool[] rowDone = new bool[m];
+            bool[] colDone = new bool[n];
+            var seq = new List<string>();
+
+            // зібрати всі клітинки у список і відсортувати за вартістю
+            var cells = new List<(int cost, int i, int j)>();
+            for (int i = 0; i < m; i++)
+                for (int j = 0; j < n; j++)
+                    cells.Add((c[i, j], i, j));
+            cells.Sort((a, b) => a.cost.CompareTo(b.cost));
+
+            int remaining = m + n; // кількість ще не виключених рядків + стовпців
+            while (remaining > 0)
+            {
+                // знайти першу клітинку, у якій і рядок, і стовпець ще активні
+                var cell = cells.First(t => !rowDone[t.i] && !colDone[t.j]);
+                int i = cell.i, j = cell.j;
+                int alloc = Math.Min(supply[i], demand[j]);
+                x[i, j] = alloc;
+                seq.Add($"(c={cell.cost}) → x{i + 1}{j + 1} = {alloc}");
+
+                supply[i] -= alloc;
+                demand[j] -= alloc;
+
+                if (supply[i] == 0 && !rowDone[i])
+                {
+                    rowDone[i] = true;
+                    remaining--;
+                    seq.Add($"Виключаємо з розгляду {i + 1}-й пункт відправлення");
+                }
+                if (demand[j] == 0 && !colDone[j])
+                {
+                    colDone[j] = true;
+                    remaining--;
+                    seq.Add($"Виключаємо з розгляду {j + 1}-й пункт призначення");
+                }
+            }
+
+            int basicCount = 0;
+            for (int r = 0; r < m; r++)
+                for (int s = 0; s < n; s++)
+                    if (x[r, s] > 0) basicCount++;
+            if (basicCount < m + n - 1)
+            {
+                var empties = cells.Where(t => x[t.i, t.j] == 0).ToList();
+                foreach (var e in empties)
+                {
+                    x[e.i, e.j] = 0; // позначаємо як базисну
+                    basicCount++;
+                    if (basicCount == m + n - 1) break;
+                }
+            }
+
+         
+            Console.WriteLine("Пошук опорного плану (метод мінімального елемента):\n");
+            Console.WriteLine("Кроки алгоритму:");
+            foreach (var s in seq) Console.WriteLine("  " + s);
+            Console.WriteLine();
+            Console.WriteLine("Опорний план перевезень:");
+            PrintPlan(x);
+            PrintCost(c, x, "Вартість перевезень за опорним планом:");
+            return x;
+        }
+
+
         private static void PrintVector(int[] v, string name)
         {
             Console.Write($"{name} := ( ");
@@ -112,6 +187,25 @@ namespace TransportNW
         }
 
 
+
+
+        private static void PrintCost(int[,] c, int[,] plan, string title)
+        {
+            int m = plan.GetLength(0), n = plan.GetLength(1);
+            int cost = 0;
+            var formula = new List<string>();
+            for (int i = 0; i < m; i++)
+                for (int j = 0; j < n; j++)
+                    if (plan[i, j] > 0)
+                    {
+                        cost += plan[i, j] * c[i, j];
+                        formula.Add($"{plan[i, j]} * {c[i, j]}");
+                    }
+            Console.WriteLine(title);
+            Console.WriteLine($"S = {string.Join(" + ", formula)} = {cost}\n");
+        }
+
+
         public static void Main()
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8; 
@@ -124,10 +218,19 @@ namespace TransportNW
                 { 4,  7, 10, 8 }
             };
             int[] PO = { 80, 90, 60 };
-            int[] PN = { 75, 65, 40, 50}; 
+            int[] PN = { 75, 65, 40, 50};
 
-            // Виконуємо лише NW‑кут
-            NorthWestCorner(cost, PO, PN);
+            // Вихідні дані
+            Console.WriteLine("Матриця витрат, PO, PN:\n");
+            PrintMatrix(cost, "c");
+            PrintVector(PO, "PO");
+            PrintVector(PN, "PN");
+
+            // Метод північно‑західного кута 
+            var nwPlan = NorthWestCorner(cost, PO, PN);
+
+            // Метод мінімального елемента
+            var lcPlan = LeastCost(cost, PO, PN);
 
             Console.WriteLine("Натисніть Enter, щоб завершити ...");
             Console.ReadLine();
