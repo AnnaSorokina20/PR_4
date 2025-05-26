@@ -1,0 +1,14 @@
+D:\ХАИ\3 курс\2 Семестр\Алг Сист прийняття рішень\Lab4\Lab4\Lab4\bin\Debug\net8.0\Lab4.exe
+D:\ХАИ\3 курс\2 Семестр\Алг Сист прийняття рішень\Lab4\Lab4\Lab4\bin\Debug\net8.0\Lab4.deps.json
+D:\ХАИ\3 курс\2 Семестр\Алг Сист прийняття рішень\Lab4\Lab4\Lab4\bin\Debug\net8.0\Lab4.runtimeconfig.json
+D:\ХАИ\3 курс\2 Семестр\Алг Сист прийняття рішень\Lab4\Lab4\Lab4\bin\Debug\net8.0\Lab4.dll
+D:\ХАИ\3 курс\2 Семестр\Алг Сист прийняття рішень\Lab4\Lab4\Lab4\bin\Debug\net8.0\Lab4.pdb
+D:\ХАИ\3 курс\2 Семестр\Алг Сист прийняття рішень\Lab4\Lab4\Lab4\obj\Debug\net8.0\Lab4.GeneratedMSBuildEditorConfig.editorconfig
+D:\ХАИ\3 курс\2 Семестр\Алг Сист прийняття рішень\Lab4\Lab4\Lab4\obj\Debug\net8.0\Lab4.AssemblyInfoInputs.cache
+D:\ХАИ\3 курс\2 Семестр\Алг Сист прийняття рішень\Lab4\Lab4\Lab4\obj\Debug\net8.0\Lab4.AssemblyInfo.cs
+D:\ХАИ\3 курс\2 Семестр\Алг Сист прийняття рішень\Lab4\Lab4\Lab4\obj\Debug\net8.0\Lab4.csproj.CoreCompileInputs.cache
+D:\ХАИ\3 курс\2 Семестр\Алг Сист прийняття рішень\Lab4\Lab4\Lab4\obj\Debug\net8.0\Lab4.dll
+D:\ХАИ\3 курс\2 Семестр\Алг Сист прийняття рішень\Lab4\Lab4\Lab4\obj\Debug\net8.0\refint\Lab4.dll
+D:\ХАИ\3 курс\2 Семестр\Алг Сист прийняття рішень\Lab4\Lab4\Lab4\obj\Debug\net8.0\Lab4.pdb
+D:\ХАИ\3 курс\2 Семестр\Алг Сист прийняття рішень\Lab4\Lab4\Lab4\obj\Debug\net8.0\Lab4.genruntimeconfig.cache
+D:\ХАИ\3 курс\2 Семестр\Алг Сист прийняття рішень\Lab4\Lab4\Lab4\obj\Debug\net8.0\ref\Lab4.dll
