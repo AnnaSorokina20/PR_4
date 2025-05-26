@@ -47,7 +47,7 @@ namespace TransportNW
             PrintVector(demandInit, "PN");
             Console.WriteLine();
 
-            Console.WriteLine("Пошук опорного плану перевезень методом північно‑західного кута:\n");
+            Console.WriteLine("----Пошук опорного плану перевезень методом північно‑західного кута:----\n");
             Console.WriteLine("Послідовність заповнення таблиці:");
             Console.WriteLine(string.Join(" -> ", sequence) + "\n");
 
@@ -152,7 +152,7 @@ namespace TransportNW
             }
 
          
-            Console.WriteLine("Пошук опорного плану (метод мінімального елемента):\n");
+            Console.WriteLine("---Пошук опорного плану (метод мінімального елемента):---\n");
             Console.WriteLine("Кроки алгоритму:");
             foreach (var s in seq) Console.WriteLine("  " + s);
             Console.WriteLine();
@@ -305,7 +305,7 @@ namespace TransportNW
             return list;
         }
 
-        // Пошук замкненого циклу для MODI (BFS, черг. рядок/стовпець)
+        // Пошук замкненого циклу для метолу потенціалів
         private static List<(int i, int j)> BuildCycle(List<(int i, int j)> basis, (int i, int j) enter)
         {
             var nodes = new List<(int i, int j)>(basis) { enter };
@@ -398,40 +398,102 @@ namespace TransportNW
         }
 
 
+        private static int[,] ReadMatrix(int rows, int cols, string name)
+        {
+            Console.WriteLine($"\nВведіть матрицю {name} розміром {rows}×{cols} " +
+                              "(елементи через пробіл):");
+            int[,] m = new int[rows, cols];
+            for (int i = 0; i < rows; i++)
+            {
+                while (true)
+                {
+                    Console.Write($"  рядок {i + 1}: ");
+                    var parts = Console.ReadLine()!
+                                  .Split(new[] { ' ', ',', ';', '\t' },
+                                         StringSplitOptions.RemoveEmptyEntries);
+
+                    if (parts.Length != cols)
+                    {
+                        Console.WriteLine($"    ❌ Треба саме {cols} чисел, спробуйте ще раз.");
+                        continue;
+                    }
+                    try
+                    {
+                        for (int j = 0; j < cols; j++) m[i, j] = int.Parse(parts[j]);
+                        break;                 // успіх – переходимо до наступного рядка
+                    }
+                    catch
+                    {
+                        Console.WriteLine("    ❌ Введено неціле число, спробуйте ще раз.");
+                    }
+                }
+            }
+            return m;
+        }
+
+        private static int[] ReadVector(int len, string name)
+        {
+            Console.WriteLine($"\nВведіть вектор {name} ({len} чисел через пробіл):");
+            while (true)
+            {
+                var parts = Console.ReadLine()!
+                              .Split(new[] { ' ', ',', ';', '\t' },
+                                     StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length != len)
+                {
+                    Console.WriteLine($"    ❌ Треба рівно {len} чисел, спробуйте ще раз.");
+                    continue;
+                }
+                try { return parts.Select(int.Parse).ToArray(); }
+                catch
+                {
+                    Console.WriteLine("    ❌ Є нецілі числа, спробуйте ще раз.");
+                }
+            }
+        }
+
+
         public static void Main()
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8; 
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.WriteLine("=== Розв’язувач транспортної задачі ===");
 
-            // Дані варіанта 20
-            int[,] cost =
+            
+            Console.Write("\nКількість пунктів відправлення (m): ");
+            int m = int.Parse(Console.ReadLine()!);
+            Console.Write("Кількість пунктів призначення  (n): ");
+            int n = int.Parse(Console.ReadLine()!);
+
+            
+            int[,] cost = ReadMatrix(m, n, "витрат (c_ij)");
+            int[] PO = ReadVector(m, "PO (запаси)");
+            int[] PN = ReadVector(n, "PN (заявки)");
+
+            
+            int sumPO = PO.Sum(), sumPN = PN.Sum();
+            if (sumPO != sumPN)
             {
-                { 7,  8, 10, 15 },
-                { 5, 6,  9, 10 },
-                { 4,  7, 10, 8 }
-            };
-            int[] PO = { 80, 90, 60 };
-            int[] PN = { 75, 65, 40, 50};
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"\n⚠️  Небалансована задача: ΣPO={sumPO}, ΣPN={sumPN}");
+                Console.WriteLine("    Додайте фіктивний рядок або стовпець та заповніть вручну.");
+                Console.ResetColor();
+                return;
+            }
 
-            // Вихідні дані
-            Console.WriteLine("Матриця витрат, PO, PN:\n");
+            Console.WriteLine("\nВихідні дані:");
             PrintMatrix(cost, "c");
             PrintVector(PO, "PO");
             PrintVector(PN, "PN");
 
-            // Метод північно‑західного кута 
+            
             var nwPlan = NorthWestCorner(cost, PO, PN);
-
-            // Метод мінімального елемента
             var lcPlan = LeastCost(cost, PO, PN);
-
-
-            // Метод потенціалів 
             var optPlan = PotentialsMODI(cost, lcPlan);
 
-
-            Console.WriteLine("Натисніть Enter, щоб завершити ...");
+            Console.WriteLine("Натисніть Enter, щоб завершити …");
             Console.ReadLine();
         }
+
     }
 }
 
